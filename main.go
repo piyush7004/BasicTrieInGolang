@@ -1,8 +1,13 @@
 package main
 
-type TrieNode struct {
-	isEnd bool
-	chars map[byte]int
+import (
+	"hello/trie/dict"
+)
+
+var t *dict.TrieNode
+
+func init() {
+	t = dict.NewTrie()
 }
 
 func main() {
