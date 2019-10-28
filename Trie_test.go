@@ -68,6 +68,49 @@ func TestOnlyAlphabets(t *testing.T) {
 	}
 }
 
+func TestTrieDelete(t *testing.T) {
+	t1 := core.NewTrie()
+	tt := []struct {
+		name     string
+		toAdd    []string
+		toDelete []string
+		toSearch string
+		res      bool
+	}{
+		{"add, search and delete test 1", []string{"name"}, []string{"name"}, "name", false},
+		{"add, search and delete test 2", []string{"named"}, []string{"name"}, "name", false},
+		{"add, search and delete test 3", []string{"named"}, []string{"name"}, "named", true},
+		{"add, search and delete test 4", []string{"name", "named"}, []string{"name"}, "named", true},
+		{"add, search and delete test 5", []string{"name", "named"}, []string{"named"}, "named", false},
+		{"add, search and delete test 6", []string{"name", "named"}, []string{"named"}, "name", true},
+		{"add, search and delete test 7", []string{"name", "named"}, []string{"name"}, "name", false},
+	}
+	for _, tc := range tt {
+		t.Run(tc.name, func(internalT *testing.T) {
+			var b bool
+			//add continuously
+			for _, s := range tc.toAdd {
+				b = t1.Insert(s)
+				if !b {
+					internalT.Fatalf("error in adding a string to trie, must not happen now")
+				}
+			}
+			//delete continuously
+			for _, s := range tc.toDelete {
+				t1.Delete(s)
+				// if !b {
+				// 	internalT.Fatalf("error in deleting a string to trie, should not happen now")
+				// }
+			}
+			//now try fetching a specific value
+			b = t1.Search(tc.toSearch)
+			if b != tc.res {
+				internalT.Errorf("failed as output should have been %v but it was %v ", tc.res, b)
+			}
+		})
+	}
+}
+
 func TestConvertLowerCase(t *testing.T) {
 	tt := []struct {
 		name string
